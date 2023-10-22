@@ -8,3 +8,7 @@ This app includes the following features:
 * Stock Performance Comparison:  Allows users to compare the performance of multiple stocks over a given time period
 * Predictive Analysis:  Use machine learning algorithms to predict stock prices based on historical data, enabling users to view predictions for future stock prices
 
+
+
+<img width="707" alt="image" src="https://github.com/mirandac7/stock-web-app/assets/92555727/034f82f1-3e83-4016-8098-609a6a2e8cae">
+
