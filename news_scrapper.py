@@ -13,33 +13,33 @@ def scrape_news(ticker_name):
     soup=BeautifulSoup(source,"html5lib")
     news_table=soup.find('table',id="news-table")
 
-    parsed_data = []
+    # Find all 'td' elements with align='right' (date and time)
+    date_time_tags = soup.find_all('td', align='right', width ='130')
 
-    for row in news_table.findAll('tr'):
-        title = row.text
-        date_data = row.td.text.split(' ')
-        
-        if len(date_data) == 1:
-            time = date_data[0]
-        else:
-            date = date_data[0]
-            time = date_data[1]
+    # Find all 'a' elements with class 'tab-link-news' under the 'div' with class 'news-link-container' (news text and URL)
+    news_links = soup.select('div.news-link-container a.tab-link-news')
 
-        parsed_data.append([date, time, title])
+    # Create a list to store the extracted data
+    data = []
 
-    parsed_news = pd.DataFrame(parsed_data, columns=['date', 'time', 'title'])
-    #clean up the title 
-    parsed_news['Contains Date'] = parsed_news.apply(lambda x: x.date in x.title, axis=1)
-
-    parsed_news['title'] = parsed_news.apply(lambda x: x['title'].replace(x['time'], ''), axis=1)
-    parsed_news['title'] = np.where(parsed_news['Contains Date'] == True,
-                        parsed_news.apply(lambda x: x['title'].replace(x['date'], ''), axis=1), parsed_news['title'])
-
-
-    parsed_news = parsed_news.drop('Contains Date', axis=1)
-    parsed_news.columns = ['Date', 'Time', 'Title']
-
+    # Iterate through the 'td' and 'a' elements to extract the data
+    for date_time_tag, news_link in zip(date_time_tags, news_links):
+        date_time = date_time_tag.text.strip()    
+        news_text = news_link.text
+    
+        data.append([date_time, news_text])
+    parsed_news = pd.DataFrame(data, columns=['Date and Time', 'Title'])
+    parsed_news[["Date","Time"]] = parsed_news["Date and Time"].str.split(' ', 1, expand=True)
+    parsed_news.drop(columns=["Date and Time"], inplace=True)
+    parsed_news['Time'] = np.where(parsed_news['Time'].isnull(),parsed_news['Date'],parsed_news['Time'])
+    
+    parsed_news['Date'] = np.where((parsed_news['Date'].str.contains('-',na=False))|\
+                                    (parsed_news['Date'].str.contains('Today',na=False)),parsed_news['Date'],np.nan)
+   
+    parsed_news['Date'].fillna(method='ffill', inplace=True)
+    today = date.today().strftime('%b-%d-%y')
+    parsed_news['Date'] = parsed_news['Date'] .replace('Today', today)
     parsed_news['Date'] = pd.to_datetime(parsed_news['Date'])
     parsed_news['Date'] = parsed_news['Date'].dt.strftime('%m/%d/%Y')
-
+    parsed_news = parsed_news[['Date','Time','Title']]
     return parsed_news

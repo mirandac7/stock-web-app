@@ -70,9 +70,9 @@ for i in range(steps, data_training_array.shape[0]):
 x_train, y_train = np.array(x_train),np.array(y_train)
 
 #load Model
-model = load_model('keras_model.h5')
-model_30 = load_model('keras_model_30.h5')
-model_60 = load_model('keras_model_60.h5')
+model = load_model('models/keras_model.h5')
+model_30 = load_model('models/keras_model_30.h5')
+model_60 = load_model('models/keras_model_60.h5')
 
 past_100_days = data_training.tail(steps)
 final_df = past_100_days.append(data_testing,ignore_index=True)
@@ -129,20 +129,3 @@ st.plotly_chart(fig3)
 
 rmse = np.sqrt(np.mean(y_predicted - y_test)**2)
 st.write(f"""##### Square Root Error: {rmse}""")
-
-
-# y_predicted_60 = model_60.predict(x_test)
-# y_predicted_60 = scaler.inverse_transform(y_predicted_60.reshape(-1,1))
-# y_predicted_30 = model_30.predict(x_test)
-# y_predicted_30 = scaler.inverse_transform(y_predicted_30.reshape(-1,1))
-
-# st.subheader('Compare Predictions Based on Different Days of Historical Prices')
-# # # Plot 
-# # fig3 = go.Figure()
-# # fig3.add_trace(go.Scatter(x=data['Date'], y=data['Actuals'], name='Actual Stock Price'))
-# # fig3.add_trace(go.Scatter(x=data['Date'], y=data['Forecasts(LSTM)'], name='Forecasted Stock Price(LSTM%s days)'%steps))
-# # fig3.update_layout(
-# #     width=900,
-# #     height=500,)
-
-# # st.plotly_chart(fig3)
