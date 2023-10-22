@@ -10,5 +10,8 @@ This app includes the following features:
 
 
 The architecture of this app is as follows:
+
+
+
 <img width="707" alt="image" src="https://github.com/mirandac7/stock-web-app/assets/92555727/034f82f1-3e83-4016-8098-609a6a2e8cae">
 
